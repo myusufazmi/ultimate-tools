@@ -4,42 +4,52 @@
  */
 
 /**
- * Debounce function
- * @param {Function} fn
+ * Debounce a function
+ * @template {Function} T
+ * @param {T} func
  * @param {number} delay
- * @returns {Function}
+ * @returns {(...args: any[]) => void}
  */
-export const debounce = (fn, delay = 300) => {
-  let timeout;
+export const debounce = (func, delay) => {
+  /** @type {ReturnType<typeof setTimeout> | null} */
+  let timeoutId = null;
   return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => fn.apply(this, args), delay);
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      // @ts-ignore
+      func.apply(null, args);
+    }, delay);
   };
 };
 
 /**
- * Throttle function
- * @param {Function} fn
+ * Throttle a function
+ * @template {Function} T
+ * @param {T} func
  * @param {number} limit
- * @returns {Function}
+ * @returns {(...args: any[]) => void}
  */
-export const throttle = (fn, limit = 300) => {
+export const throttle = (func, limit) => {
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
   let lastFunc;
+  /** @type {number | undefined} */
   let lastRan;
   return (...args) => {
     if (!lastRan) {
-      fn.apply(this, args);
+      // @ts-ignore
+      func.apply(null, args);
       lastRan = Date.now();
     } else {
-      clearTimeout(lastFunc);
+      if (lastFunc) clearTimeout(lastFunc);
       lastFunc = setTimeout(
         () => {
-          if (Date.now() - lastRan >= limit) {
-            fn.apply(this, args);
+          if (Date.now() - (lastRan || 0) >= limit) {
+            // @ts-ignore
+            func.apply(null, args);
             lastRan = Date.now();
           }
         },
-        limit - (Date.now() - lastRan),
+        limit - (Date.now() - (lastRan || 0)),
       );
     }
   };
@@ -47,21 +57,22 @@ export const throttle = (fn, limit = 300) => {
 
 /**
  * Deep clone an object
- * @param {any} obj
- * @returns {any}
+ * @template T
+ * @param {T} obj
+ * @returns {T}
  */
 export const deepClone = (obj) => {
-  if (obj === null || typeof obj !== "object") return obj;
   return JSON.parse(JSON.stringify(obj));
 };
 
 /**
- * Generates a simple UUID-like string
+ * Generate a UUID
  * @returns {string}
  */
 export const uuid = () => {
-  return (
-    Math.random().toString(36).substring(2, 10) +
-    Date.now().toString(36).substring(2, 6)
-  );
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 };

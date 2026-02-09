@@ -6,7 +6,7 @@
 /**
  * Get a query parameter value from URL
  * @param {string} key
- * @param {string} url - Default: window.location.href
+ * @param {string} [url] - Default: window.location.href
  * @returns {string|null}
  */
 export const getParam = (key, url = window.location.href) => {
@@ -16,22 +16,23 @@ export const getParam = (key, url = window.location.href) => {
 
 /**
  * Get all query parameters as an object
- * @param {string} url
- * @returns {Object}
+ * @param {string} [url] - Default: window.location.href
+ * @returns {Object.<string, string>}
  */
 export const getQueryParams = (url = window.location.href) => {
   const searchParams = new URL(url).searchParams;
+  /** @type {Object.<string, string>} */
   const params = {};
-  for (const [key, value] of searchParams.entries()) {
+  searchParams.forEach((value, key) => {
     params[key] = value;
-  }
+  });
   return params;
 };
 
 /**
  * Update a query parameter in the URL without reloading
  * @param {string} key
- * @param {string} value
+ * @param {string|null} value
  */
 export const updateParam = (key, value) => {
   const url = new URL(window.location.href);

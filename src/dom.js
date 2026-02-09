@@ -1,70 +1,73 @@
 /**
  * DOM Utilities
- * Premium query selectors and manipulation tools.
+ * Fast, modern, and lightweight DOM helpers.
  */
 
 /**
- * Higher performance querySelector wrapper
+ * Enhanced querySelector
  * @param {string} selector
- * @param {HTMLElement|Document} context
- * @returns {HTMLElement|null}
+ * @param {Document|Element} context
+ * @returns {Element|null}
  */
-export const $ = (selector, context = document) => {
-  return context.querySelector(selector);
-};
+export const $ = (selector, context = document) =>
+  context.querySelector(selector);
 
 /**
- * querySelectorAll wrapper that returns an array instead of a NodeList
+ * Enhanced querySelectorAll (returns Array)
  * @param {string} selector
- * @param {HTMLElement|Document} context
- * @returns {HTMLElement[]}
+ * @param {Document|Element} context
+ * @returns {Element[]}
  */
-export const $$ = (selector, context = document) => {
-  return Array.from(context.querySelectorAll(selector));
-};
+export const $$ = (selector, context = document) =>
+  Array.from(context.querySelectorAll(selector));
 
 /**
  * Create element with attributes and styles
  * @param {string} tag
  * @param {Object} options
- * @returns {HTMLElement}
+ * @param {Object.<string, string>} [options.attr]
+ * @param {Object.<string, string>} [options.style]
+ * @param {string} [options.text]
+ * @param {string} [options.html]
+ * @param {Array<Element|string|Node>} [options.children]
+ * @returns {Element}
  */
 export const create = (tag, options = {}) => {
   const el = document.createElement(tag);
-  const {
-    attr = {},
-    style = {},
-    text = "",
-    html = "",
-    children = [],
-  } = options;
-
-  Object.entries(attr).forEach(([k, v]) => el.setAttribute(k, v));
-  Object.assign(el.style, style);
-
-  if (text) el.textContent = text;
-  if (html) el.innerHTML = html;
-
-  children.forEach((child) => {
-    if (child instanceof HTMLElement) el.appendChild(child);
-    else el.append(child);
-  });
-
+  if (options.attr) {
+    Object.entries(options.attr).forEach(([k, v]) => el.setAttribute(k, v));
+  }
+  if (options.style) {
+    Object.entries(options.style).forEach(([k, v]) => {
+      // @ts-ignore
+      el.style[k] = v;
+    });
+  }
+  if (options.text) el.textContent = options.text;
+  if (options.html) el.innerHTML = options.html;
+  if (options.children) {
+    options.children.forEach((child) => {
+      el.appendChild(
+        typeof child === "string" ? document.createTextNode(child) : child,
+      );
+    });
+  }
   return el;
 };
 
 /**
  * Event delegation helper
- * @param {HTMLElement|Document} parent
+ * @param {Element|Document} parent
  * @param {string} event
  * @param {string} selector
- * @param {Function} handler
+ * @param {(e: Event, target: Element) => void} handler
  */
 export const on = (parent, event, selector, handler) => {
   parent.addEventListener(event, (e) => {
-    const target = e.target.closest(selector);
-    if (target && parent.contains(target)) {
-      handler.call(target, e, target);
+    const target = /** @type {Element} */ (e.target);
+    if (target.closest(selector)) {
+      const matched = target.closest(selector);
+      if (matched) handler(e, matched);
     }
   });
 };

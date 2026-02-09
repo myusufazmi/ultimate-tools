@@ -1,58 +1,59 @@
 /**
  * Storage Utilities
- * Type-safe and auto-serialized local/session storage.
+ * Wrapper for LocalStorage and SessionStorage with JSON support.
  */
 
-const createStorage = (type = "localStorage") => {
-  const storage = window[type];
+/**
+ * @param {Storage} provider
+ */
+const createStorage = (provider) => ({
+  /**
+   * Set a value in storage
+   * @param {string} key
+   * @param {any} value
+   */
+  set(key, value) {
+    try {
+      provider.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      console.error("Error saving to storage", e);
+    }
+  },
 
-  return {
-    /**
-     * Set item with auto-serialization
-     * @param {string} key
-     * @param {any} value
-     */
-    set(key, value) {
-      try {
-        const serialized = JSON.stringify(value);
-        storage.setItem(key, serialized);
-      } catch (e) {
-        console.error(`Storage Error (set): ${key}`, e);
-      }
-    },
+  /**
+   * Get a value from storage
+   * @template T
+   * @param {string} key
+   * @param {T} [fallback]
+   * @returns {T}
+   */
+  get(key, fallback = undefined) {
+    try {
+      const item = provider.getItem(key);
+      // @ts-ignore
+      return item ? JSON.parse(item) : fallback;
+    } catch (e) {
+      console.error("Error reading from storage", e);
+      // @ts-ignore
+      return fallback;
+    }
+  },
 
-    /**
-     * Get item with auto-deserialization
-     * @param {string} key
-     * @param {any} fallback
-     * @returns {any}
-     */
-    get(key, fallback = null) {
-      try {
-        const item = storage.getItem(key);
-        return item ? JSON.parse(item) : fallback;
-      } catch (e) {
-        console.error(`Storage Error (get): ${key}`, e);
-        return fallback;
-      }
-    },
+  /**
+   * Remove a value from storage
+   * @param {string} key
+   */
+  remove(key) {
+    provider.removeItem(key);
+  },
 
-    /**
-     * Remove item
-     * @param {string} key
-     */
-    remove(key) {
-      storage.removeItem(key);
-    },
+  /**
+   * Clear all storage
+   */
+  clear() {
+    provider.clear();
+  },
+});
 
-    /**
-     * Clear all items
-     */
-    clear() {
-      storage.clear();
-    },
-  };
-};
-
-export const local = createStorage("localStorage");
-export const session = createStorage("sessionStorage");
+export const local = createStorage(localStorage);
+export const session = createStorage(sessionStorage);

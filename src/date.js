@@ -6,13 +6,14 @@
 /**
  * Basic Date Formatter
  * @param {Date|string|number} date
- * @param {string} pattern - Default: 'YYYY-MM-DD'
+ * @param {string} [pattern] - Default: 'YYYY-MM-DD'
  * @returns {string}
  */
 export const formatDate = (date, pattern = "YYYY-MM-DD") => {
   const d = new Date(date);
   if (isNaN(d.getTime())) return "Invalid Date";
 
+  /** @type {Object.<string, string|number>} */
   const map = {
     YYYY: d.getFullYear(),
     MM: String(d.getMonth() + 1).padStart(2, "0"),
@@ -22,7 +23,9 @@ export const formatDate = (date, pattern = "YYYY-MM-DD") => {
     ss: String(d.getSeconds()).padStart(2, "0"),
   };
 
-  return pattern.replace(/YYYY|MM|DD|HH|mm|ss/g, (matched) => map[matched]);
+  return pattern.replace(/YYYY|MM|DD|HH|mm|ss/g, (matched) =>
+    String(map[matched]),
+  );
 };
 
 /**
@@ -33,7 +36,7 @@ export const formatDate = (date, pattern = "YYYY-MM-DD") => {
 export const relativeTime = (date) => {
   const d = new Date(date);
   const now = new Date();
-  const diff = Math.floor((now - d) / 1000);
+  const diff = Math.floor((now.getTime() - d.getTime()) / 1000);
 
   if (diff < 60) return "just now";
   if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;

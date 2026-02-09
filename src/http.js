@@ -1,60 +1,76 @@
 /**
  * HTTP Utilities
- * Clean Fetch API wrapper with easy JSON handling and interceptors.
+ * Wrapper for Fetch API with JSON support by default.
  */
 
-const request = async (url, options = {}) => {
-  const {
-    method = "GET",
-    headers = {},
-    body = null,
-    interceptors = { request: [], response: [] },
-  } = options;
+const base = {
+  /** @type {(url: string, options: RequestInit) => Promise<any>} */
+  async request(url, options) {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+          ...options.headers,
+        },
+        ...options,
+      });
 
-  let config = {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      ...headers,
-    },
-  };
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw { status: response.status, ...error };
+      }
 
-  if (body && typeof body === "object") {
-    config.body = JSON.stringify(body);
-  } else if (body) {
-    config.body = body;
-  }
-
-  // Request Interceptors
-  interceptors.request.forEach((fn) => {
-    config = fn(config) || config;
-  });
-
-  try {
-    const response = await fetch(url, config);
-    let data = await response.json().catch(() => null);
-
-    // Response Interceptors
-    interceptors.response.forEach((fn) => {
-      data = fn(data, response) || data;
-    });
-
-    if (!response.ok) {
-      throw { status: response.status, data };
+      // Return JSON if possible, otherwise text
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        return response.json();
+      }
+      return response.text();
+    } catch (error) {
+      throw error;
     }
-
-    return data;
-  } catch (error) {
-    console.error("Fetch Error:", error);
-    throw error;
-  }
+  },
 };
 
 export const http = {
-  get: (url, options) => request(url, { ...options, method: "GET" }),
-  post: (url, body, options) =>
-    request(url, { ...options, method: "POST", body }),
-  put: (url, body, options) =>
-    request(url, { ...options, method: "PUT", body }),
-  delete: (url, options) => request(url, { ...options, method: "DELETE" }),
+  /**
+   * GET request
+   * @param {string} url
+   * @param {RequestInit} [options]
+   */
+  get: (url, options = {}) => base.request(url, { method: "GET", ...options }),
+
+  /**
+   * POST request
+   * @param {string} url
+   * @param {any} body
+   * @param {RequestInit} [options]
+   */
+  post: (url, body, options = {}) =>
+    base.request(url, {
+      method: "POST",
+      body: JSON.stringify(body),
+      ...options,
+    }),
+
+  /**
+   * PUT request
+   * @param {string} url
+   * @param {any} body
+   * @param {RequestInit} [options]
+   */
+  put: (url, body, options = {}) =>
+    base.request(url, {
+      method: "PUT",
+      body: JSON.stringify(body),
+      ...options,
+    }),
+
+  /**
+   * DELETE request
+   * @param {string} url
+   * @param {RequestInit} [options]
+   */
+  delete: (url, options = {}) =>
+    base.request(url, { method: "DELETE", ...options }),
 };
