@@ -47,7 +47,61 @@ import { http } from "@myusufazmi/ultimate-tools";
 
 ---
 
-### 📅 Date Utilities (NEW v1.1.0)
+### 📱 Device & Clipboard (NEW v1.3.0)
+
+Modern device detection and clipboard interactions.
+
+```javascript
+import { copyToClipboard, isMobile, getOS } from "@myusufazmi/ultimate-tools";
+
+await copyToClipboard("Hello!");
+if (isMobile()) console.log("User is on mobile");
+console.log(getOS()); // "iOS", "Android", "Windows", etc.
+```
+
+---
+
+### 🎨 Color Manipulation (NEW v1.3.0)
+
+Advanced color tools for theming.
+
+```javascript
+import { hexToRgb, lighten, randomColor } from "@myusufazmi/ultimate-tools";
+
+hexToRgb("#ffffff"); // {r: 255, g: 255, b: 255}
+lighten("#000000", 20); // Lighten by 20%
+randomColor(); // "#3a7f21"
+```
+
+---
+
+### 🔗 URL & Query Params (NEW v1.3.0)
+
+Manage URL state without page rereshes.
+
+```javascript
+import { getParam, updateParam } from "@myusufazmi/ultimate-tools";
+
+const page = getParam("page"); // ?page=2 -> "2"
+updateParam("sort", "desc"); // Updates URL automatically
+```
+
+---
+
+### 🖼️ File & Image Tools (NEW v1.3.0)
+
+Essential file handling utilities.
+
+```javascript
+import { toBase64, formatFileSize } from "@myusufazmi/ultimate-tools";
+
+const base64 = await toBase64(fileInput.files[0]);
+console.log(formatFileSize(1024 * 1024)); // "1 MB"
+```
+
+---
+
+### 📅 Date Utilities
 
 Simple and efficient date formatting and manipulation.
 
@@ -56,12 +110,11 @@ import { formatDate, relativeTime, addDays } from "@myusufazmi/ultimate-tools";
 
 formatDate(new Date(), "YYYY-MM-DD HH:mm:ss"); // "2026-02-09 11:58:39"
 relativeTime(new Date(Date.now() - 3600000)); // "1 hours ago"
-addDays(new Date(), 7); // Date object + 7 days
 ```
 
 ---
 
-### 💎 Formatting Utilities (NEW v1.1.0)
+### 💎 Formatting Utilities
 
 Tools for number, currency, and string formatting.
 
@@ -72,25 +125,16 @@ import {
   slugify,
   truncate,
 } from "@myusufazmi/ultimate-tools";
-
-currency(50000); // "Rp 50.000,00" (default id-ID)
-number(1234.56, 1); // "1.234,6"
-slugify("Halo Dunia!"); // "halo-dunia"
-truncate("Teks yang sangat panjang sekali", 10); // "Teks yang..."
 ```
 
 ---
 
-### 🛡 Validation Utilities (NEW v1.1.0)
+### 🛡 Validation Utilities
 
 Common regex-based validation helpers.
 
 ```javascript
 import { isEmail, isStrongPassword, isEmpty } from "@myusufazmi/ultimate-tools";
-
-isEmail("test@example.com"); // true
-isStrongPassword("Pass123"); // false (too short)
-isEmpty("   "); // true
 ```
 
 ---
@@ -103,9 +147,6 @@ Type-safe and auto-serialized storage for persistent data.
 import { local, session } from "@myusufazmi/ultimate-tools";
 ```
 
-- **`local.set(key, value)`** / **`session.set(key, value)`**
-- **`local.get(key, fallback)`** / **`session.get(key, fallback)`**
-
 ---
 
 ### 🔄 State Management
@@ -114,10 +155,6 @@ A tiny ( < 1KB) reactive state manager.
 
 ```javascript
 import { createStore } from "@myusufazmi/ultimate-tools";
-
-const count = createStore(0);
-count.subscribe((val) => console.log(val));
-count.update((n) => n + 1);
 ```
 
 ---
@@ -134,11 +171,6 @@ import {
   uuid,
 } from "@myusufazmi/ultimate-tools";
 ```
-
-- **`debounce(fn, delay)`**
-- **`throttle(fn, limit)`**
-- **`deepClone(obj)`**
-- **`uuid()`**
 
 ---
 

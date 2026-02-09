@@ -6,3 +6,7 @@ export * from "./utils.js";
 export * from "./date.js";
 export * from "./format.js";
 export * from "./validation.js";
+export * from "./device.js";
+export * from "./color.js";
+export * from "./url.js";
+export * from "./file.js";
