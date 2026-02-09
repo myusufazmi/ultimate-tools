@@ -2,17 +2,19 @@
   "name": "@myusufazmi/ultimate-tools",
   "version": "1.1.1",
   "description": "Modern JS utility library for high-performance projects",
-  "main": "src/index.js",
-  "module": "src/index.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
   "type": "module",
   "files": [
+    "dist",
     "src",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "npx -y lite-server"
+    "serve": "npx -y lite-server",
+    "build": "rollup -c"
   },
   "keywords": [
     "javascript",
@@ -31,5 +33,11 @@
   "bugs": {
     "url": "https://github.com/yourusername/ultimate-tools/issues"
   },
-  "homepage": "https://github.com/yourusername/ultimate-tools#readme"
+  "homepage": "https://github.com/yourusername/ultimate-tools#readme",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.57.1"
+  }
 }
