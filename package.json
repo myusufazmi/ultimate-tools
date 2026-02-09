@@ -1,0 +1,35 @@
+{
+  "name": "@myusufazmi/ultimate-tools",
+  "version": "1.1.1",
+  "description": "Modern JS utility library for high-performance projects",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "type": "module",
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "npx -y lite-server"
+  },
+  "keywords": [
+    "javascript",
+    "utilities",
+    "dom",
+    "state",
+    "http",
+    "storage"
+  ],
+  "author": "Your Name",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/ultimate-tools.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/ultimate-tools/issues"
+  },
+  "homepage": "https://github.com/yourusername/ultimate-tools#readme"
+}
