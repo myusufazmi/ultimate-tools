@@ -55,5 +55,31 @@ const createStorage = (provider) => ({
   },
 });
 
-export const local = createStorage(localStorage);
-export const session = createStorage(sessionStorage);
+/**
+ * @param {string} type
+ * @returns {Storage}
+ */
+const getProvider = (type) => {
+  try {
+    // @ts-ignore
+    if (typeof window !== "undefined" && window[type]) {
+      // @ts-ignore
+      return window[type];
+    }
+  } catch (e) {
+    // ignore
+  }
+  // Mock fallback for Node/Test environment
+  // @ts-ignore
+  return {
+    getItem: () => null,
+    setItem: () => {},
+    removeItem: () => {},
+    clear: () => {},
+    key: () => null,
+    length: 0,
+  };
+};
+
+export const local = createStorage(getProvider("localStorage"));
+export const session = createStorage(getProvider("sessionStorage"));
